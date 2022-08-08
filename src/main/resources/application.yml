@@ -1,0 +1,91 @@
+host: 'https://****'
+
+spring:
+  application:
+    name: food-delivery-backend
+  main:
+    allow-circular-references: true
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    url: jdbc:mysql://****:8003/fd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B0
+    username: ****
+    password: ****
+    hikari:
+      connection-test-query: SELECT 1
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher # SpringBoot 2.6 Compatible swagger3
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: ****
+    password: ****
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+    test-connection: false
+  redis:
+    database: 0
+    host: ****
+    port: ****
+    password: ****
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
+
+
+server:
+  port: 8001
+  servlet:
+    context-path: /api
+logging:
+  level:
+    root: info
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: AUTO
+      logic-delete-field: flag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+#      column-format: "`%s`"
+    #      update-strategy: ignored
+    banner: false
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath*:/mapper/**/*.xml
+  typeEnumsPackage: uk.ac.soton.food_delivery.enums
+
+aliyun:
+  oss:
+    file:
+      endpoint: ****
+      keyid: ****
+      keysecret: ****
+      bucketname: ****
+
+springfox:
+  documentation:
+    swagger-ui:
+      enabled: true
+
+jwt:
+  secret: D2R8AH4ZaJ8gkiGgZCeh41WVJH2RnAQ1
+  expiration: 172800000 # JWT的超期限时间（1000*60*60*24*2）2天
+  tokenHead: Bearer
+  tokenHeader: Authorization
+
+google:
+  geo:
+    api: ****

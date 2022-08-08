@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.ac.soton.food_delivery.mapper.MenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="uk.ac.soton.food_delivery.entity.DO.Menu">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="price" property="price" />
+        <result column="photo" property="photo" />
+        <result column="status" property="status" />
+        <result column="restaurant_id" property="restaurantId" />
+        <result column="description" property="description" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    <select id="searchMenus" resultType="uk.ac.soton.food_delivery.entity.DO.Menu">
+        select * from menu
+                 WHERE
+                    menu.status = 1
+                     and
+            menu.restaurant_id= #{restaurantId}
+            <if test='name != null and name !=""'>
+                   and
+                menu.`name` LIKE concat(concat('%',#{name}),'%')
+            </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.ac.soton.food_delivery.mapper.RestaurantMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="uk.ac.soton.food_delivery.entity.DO.Restaurant">
+        <id column="id" property="id"/>
+        <result column="owner_id" property="ownerId"/>
+        <result column="address_id" property="addressId"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="certification_file" property="certificationFile"/>
+        <result column="average_cooking_time" property="averageCookingTime"/>
+        <result column="mark" property="mark"/>
+        <result column="avatar" property="avatar"/>
+    </resultMap>
+    <select id="searchRestaurantPage" resultType="uk.ac.soton.food_delivery.entity.DO.Restaurant">
+        SELECT DISTINCT
+        *
+        FROM
+        restaurant
+        WHERE
+        restaurant.`status` = 1
+        <if test='filter.keyword != null and filter.keyword !="" or filter.categoryId != null'>
+            AND
+        </if>
+        <if test='filter.keyword != null and filter.keyword !=""'>
+            restaurant.`name` LIKE concat(concat('%',#{filter.keyword}),'%')
+        </if>
+        <if test='filter.categoryId != null and filter.keyword != null and filter.keyword !=""'>
+            AND
+        </if>
+        <if test="filter.categoryId != null">
+            restaurant.category_id = #{filter.categoryId}
+        </if>
+        <if test='filter.keyword != null and filter.keyword !=""'>
+            OR
+            id IN (
+            SELECT DISTINCT
+            restaurant_id
+            FROM
+            menu
+            JOIN restaurant ON menu.status=1 and menu.restaurant_id = restaurant.id
+            JOIN category ON restaurant.category_id = category.id
+            WHERE
+            menu.`name` LIKE concat(concat('%',#{filter.keyword}),'%')
+            <if test="filter.categoryId != null">
+                AND
+                category.id = #{filter.categoryId}
+            </if>
+            )
+        </if>
+        ORDER BY
+        mark DESC
+
+    </select>
+
+</mapper>

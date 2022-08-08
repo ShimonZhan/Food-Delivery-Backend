@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.ac.soton.food_delivery.mapper.AuthorityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="uk.ac.soton.food_delivery.entity.DO.Authority">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="role_id" property="roleId"/>
+        <result column="perms" property="perms"/>
+    </resultMap>
+    <select id="selectPermsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT
+            authority.perms
+        FROM
+            authority
+                INNER JOIN `user` ON authority.role_id = `user`.role_id
+        WHERE
+            authority.enabled = 1
+          AND `user`.id = #{userId}
+    </select>
+    <select id="selectPermsByRole" resultType="java.lang.String">
+        SELECT
+            perms
+        FROM
+            authority
+        WHERE
+            role_id = #{userRole.code}
+          AND enabled = 1
+    </select>
+    <select id="userPermExist" resultType="java.lang.Boolean">
+        SELECT
+            COUNT( authority.perms )
+        FROM
+            authority
+        WHERE
+            enabled = 1
+          AND role_id = #{userRole.code}
+          AND perms = #{perm}
+    </select>
+    <select id="getLastInsertId" resultType="java.lang.Long">
+        SELECT LAST_INSERT_ID()
+    </select>
+
+</mapper>

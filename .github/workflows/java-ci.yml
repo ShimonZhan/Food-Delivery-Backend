@@ -1,0 +1,65 @@
+name: Java CI with Maven
+
+on:
+  workflow_dispatch:
+  push:
+    # 分支
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    name: Running Java ${{ matrix.java }} compile
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt' # See 'Supported distributions' for available options
+          java-version: '17'
+      - name: Cache local Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: 编译代码
+        run: mvn compile
+      - name: Generate the package
+        run: mvn -B package --file pom.xml -Dmaven.test.skip=true
+      - uses: mdallasanta/ssh-scp-deploy@v1.2.0
+        with:
+          local: './target/food_delivery-0.0.1-SNAPSHOT.jar'
+          remote: '/root/fd/'
+          host: ${{secrets.HOST}}
+          port: ${{secrets.PORT}}
+          user: ${{secrets.USER}}
+          password: ${{secrets.PSWD}}
+          pre_upload: cd /root/fd/
+          post_upload: sh /root/fd/boot.sh restart
+          ssh_options: -o StrictHostKeyChecking=no
+
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: my-artifact
+#          path: target/food_delivery-0.0.1-SNAPSHOT.jar
+#      - name: scp jar to server
+#        uses: garygrossgarten/github-action-scp@release
+#        with:
+#          local: target/food_delivery-0.0.1-SNAPSHOT.jar
+#          remote: /root/food_delivery-0.0.1-SNAPSHOT.jar
+#          host: ${{secrets.HOST}}
+#          username: ${{secrets.USER}}
+#          password: ${{secrets.PSWD}}
+#      - name: executing remote ssh commands using password
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{secrets.HOST}}
+#          username: ${{secrets.USER}}
+#          password: ${{secrets.PSWD}}
+#          port: ${{secrets.PORT}}
+#          script: cd /root && sh ./start.sh &
+

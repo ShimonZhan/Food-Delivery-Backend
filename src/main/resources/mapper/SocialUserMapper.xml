@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="uk.ac.soton.food_delivery.mapper.SocialUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="uk.ac.soton.food_delivery.entity.DO.SocialUser">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="source" property="source" />
+        <result column="uuid" property="uuid" />
+        <result column="access_token" property="accessToken" />
+        <result column="expire_in" property="expireIn" />
+    </resultMap>
+
+</mapper>
